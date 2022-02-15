@@ -10,66 +10,95 @@
         @click="moveToPage(todo.id)">
         <div class="form-check flex-grow-1">
           <input 
-            class="form-check-input" 
+            class="mr-4"
             type="checkbox"
             :checked="todo.completed"
             @change="toggleTodo(index, $event)"
             @click.stop
           >
-          <label
-            class="form-check-label"
+          <span
             :class="{ todo: todo.completed }"
           >
             {{ todo.subject }}
-          </label>
+          </span>
         </div>
         <div>
           <button
             class="btn btn-danger btn-sm"
-            @click.stop="deleteTodo(index)"
+            @click.stop="openModal(todo.id)"
           >
             Delete
           </button>
         </div>
       </div>
     </div>
+    <teleport to="#modal">
+      <Modal
+        v-if="showModal"
+        @close="closeModal"
+        @delete="deleteTodo">
+      </Modal>
+    </teleport>
 </template>
 
 <script>
 import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+import Modal from '@/components/DeleteModal.vue';
+
 export default {
-    props: {
-        todos: {
-            type: Array,
-            required: true,
-        }
-    },
-    emits: ['toggle-todo', 'delete-todo'],
-    setup(props, { emit }) {
-        const router = useRouter();
-        const toggleTodo = (index, event) => {
-            emit('toggle-todo', index, event.target.checked);
-        };
+  components: {
+    Modal
+  },
+  props: {
+      todos: {
+          type: Array,
+          required: true,
+      }
+  },
+  emits: ['toggle-todo', 'delete-todo'],
+  setup(props, { emit }) {
+      const router = useRouter();
+      const showModal = ref(false);
+      const todoDeleteId = ref(null);
+      const toggleTodo = (index, event) => {
+          emit('toggle-todo', index, event.target.checked);
+      };
 
-        const deleteTodo = (index) => {
-            emit('delete-todo', index);
-        };
+      const openModal = (todoId) => {
+        todoDeleteId.value = todoId;
+        showModal.value = true;
+      };
 
-        const moveToPage = (todoId) => {
-            router.push({
-                name: 'Todo',
-                params: {
-                    id: todoId,
-                }
-            })
-        };
+      const closeModal = () => {
+        todoDeleteId.value = null;
+        showModal.value = false;
+      }
 
-        return {
-            toggleTodo,
-            deleteTodo,
-            moveToPage,
-        }
-    }
+      const deleteTodo = () => {
+          emit('delete-todo', todoDeleteId.value);
+          showModal.value = false;
+          todoDeleteId.value = null;
+      };
+
+      const moveToPage = (todoId) => {
+          router.push({
+              name: 'Todo',
+              params: {
+                  id: todoId,
+              }
+          })
+      };
+
+      return {
+          toggleTodo,
+          deleteTodo,
+          moveToPage,
+          openModal,
+          closeModal,
+          showModal,
+      }
+  }
 }
 </script>
 
