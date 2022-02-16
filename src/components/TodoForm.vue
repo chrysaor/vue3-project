@@ -7,18 +7,10 @@
         v-else>
         <div class="row">
             <div class="col-6">
-                <div class="form-group">
-                    <label>Subject</label>
-                    <input
-                        v-model="todo.subject"
-                        type="text"
-                        class="form-control">
-                    <div
-                        class="text-red"
-                        v-if="subjectError">
-                        {{ subjectError }}
-                    </div>
-                </div>
+                <Input 
+                    label="Subject"
+                    v-model:subject="todo.subject"
+                    :error="subjectError"/>
             </div>
             <div v-if="editing" class="col-6">
                 <div class="form-group">
@@ -71,10 +63,12 @@ import axios from 'axios';
 import _ from 'lodash';
 import Toast from '@/components/Toast.vue';
 import { useToast } from '@/hooks/toast';
+import Input from '@/components/Input.vue';
 
 export default {
     components: {
-        Toast
+        Toast,
+        Input,
     },
     props: {
         editing: {
