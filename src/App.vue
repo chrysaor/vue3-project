@@ -15,14 +15,54 @@
   <div class="container">
     <router-view/>
   </div>
+  <transition name="fade">
+    <Toast
+      v-if="showToast" 
+      :message="toastMessage"
+      :type="toastAlertType"
+    />
+  </transition>
 </template>
 
 <script>
-export default {
+import Toast from '@/components/Toast.vue';
+import { useToast } from '@/composables/toast';
 
+export default {
+  components: {
+    Toast
+  },
+  setup() {
+    const {
+        toastMessage,
+        toastAlertType,
+        showToast,
+        triggerToast,
+    } = useToast();
+
+    return {
+      toastMessage,
+      toastAlertType,
+      showToast,
+      triggerToast,      
+    }
+  }
 }
 </script>
 
 <style>
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: all 1s ease;
+    }
 
+    .fade-enter-from,
+    .fade-leave-to {
+        opacity: 0;
+    }
+
+    .fade-enter-to,
+    .fade-leave-from {
+        opacity: 1;
+    }
 </style>

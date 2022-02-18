@@ -22,8 +22,12 @@
 </template>
 
 <script>
+import { getCurrentInstance } from 'vue';
+
 export default {
-    setup(props, { emit }) {
+    emits: ['close'],
+    setup() {
+        const { emit } = getCurrentInstance();
         const onClose = () => {
             emit('close');
         }

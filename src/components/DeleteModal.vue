@@ -25,12 +25,15 @@
 
 <script>
 import Modal from '@/components/Modal.vue';
+import { getCurrentInstance } from 'vue';
 
 export default {
     components: {
         Modal,
     },
-    setup(props, { emit }) {
+    emits: ['close', 'delete'],
+    setup() {
+        const { emit } = getCurrentInstance();
         const onClose = () => {
             emit('close');
         }

@@ -42,7 +42,7 @@
 
 <script>
 import { useRouter } from 'vue-router';
-import { ref } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
 import Modal from '@/components/DeleteModal.vue';
 import List from '@/components/List.vue';
 
@@ -58,47 +58,48 @@ export default {
       }
   },
   emits: ['toggle-todo', 'delete-todo'],
-  setup(props, { emit }) {
-      const router = useRouter();
-      const showModal = ref(false);
-      const todoDeleteId = ref(null);
-      const toggleTodo = (index, event) => {
-          emit('toggle-todo', index, event.target.checked);
-      };
+  setup() {
+    const { emit } = getCurrentInstance();
+    const router = useRouter();
+    const showModal = ref(false);
+    const todoDeleteId = ref(null);
+    const toggleTodo = (index, event) => {
+        emit('toggle-todo', index, event.target.checked);
+    };
 
-      const openModal = (todoId) => {
-        todoDeleteId.value = todoId;
-        showModal.value = true;
-      };
+    const openModal = (todoId) => {
+      todoDeleteId.value = todoId;
+      showModal.value = true;
+    };
 
-      const closeModal = () => {
-        todoDeleteId.value = null;
+    const closeModal = () => {
+      todoDeleteId.value = null;
+      showModal.value = false;
+    }
+
+    const deleteTodo = () => {
+        emit('delete-todo', todoDeleteId.value);
         showModal.value = false;
-      }
+        todoDeleteId.value = null;
+    };
 
-      const deleteTodo = () => {
-          emit('delete-todo', todoDeleteId.value);
-          showModal.value = false;
-          todoDeleteId.value = null;
-      };
+    const moveToPage = (todoId) => {
+        router.push({
+            name: 'Todo',
+            params: {
+                id: todoId,
+            }
+        })
+    };
 
-      const moveToPage = (todoId) => {
-          router.push({
-              name: 'Todo',
-              params: {
-                  id: todoId,
-              }
-          })
-      };
-
-      return {
-          toggleTodo,
-          deleteTodo,
-          moveToPage,
-          openModal,
-          closeModal,
-          showModal,
-      }
+    return {
+        toggleTodo,
+        deleteTodo,
+        moveToPage,
+        openModal,
+        closeModal,
+        showModal,
+    }
   }
 }
 </script>
