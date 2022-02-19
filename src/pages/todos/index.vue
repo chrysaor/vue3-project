@@ -28,54 +28,28 @@
     />
 
     <hr />
+    <Pagintation
+      v-if="todos.length"
+      :numberOfPages="numberOfPages"
+      :currentPage="currentPage"
+      @click="getTodos"
+    />
 
-    <nav aria-label="Page navigation example">
-      <ul class="pagination">
-        <li v-if="currentPage === 1" class="page-item disabled">
-          <a style="cursor: pointer" class="page-link" @click="getTodos(currentPage - 1)">
-            Previous
-          </a>
-        </li>
-        <li v-else-if="currentPage !== 1" class="page-item">
-          <a style="cursor: pointer" class="page-link" @click="getTodos(currentPage - 1)">
-            Previous
-          </a>
-        </li>
-        <li
-          v-for="page in numberOfPages"
-          :key="page"
-          class="page-item"
-          :class="currentPage === page ? 'active' : ''"
-        >
-          <a style="cursor: pointer" class="page-link" @click="getTodos(page)">{{page}}</a>
-        </li>
-        <li v-if="currentPage !== numberOfPages" class="page-item">
-          <a style="cursor: pointer" class="page-link" @click="getTodos(currentPage + 1)">Next</a>
-        </li>
-        <li v-else-if="currentPage === numberOfPages" class="page-item disabled">
-          <a style="cursor: pointer" class="page-link" @click="getTodos(currentPage + 1)">Next</a>
-        </li>
-      </ul>
-    </nav>
   </div>
-    <Toast
-        v-if="showToast"
-        :message="toastMessage"
-        :type="toastAlertType"/>
 </template>
 
 <script>
 import { ref, computed, watch } from 'vue';
 import TodoList from '@/components/TodoList.vue';
-import Toast from '@/components/Toast.vue';
 import axios from '@/axios';
 import { useToast } from '@/composables/toast';
 import { useRouter } from 'vue-router';
+import Pagintation from '@/components/Pagination.vue';
 
 export default {
   components: {
     TodoList,
-    Toast,
+    Pagintation,
   },
   setup() {
     const router = useRouter()
